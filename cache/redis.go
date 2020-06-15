@@ -1,9 +1,12 @@
 package cache
 
 import (
+	"strings"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type redisCache struct {
@@ -13,9 +16,35 @@ type redisCache struct {
 
 type redisItemMapGetter map[string][]byte
 
-func newRedisCache(host string, password string, defaultExpiration time.Duration) *redisCache {
+func init() {
+	//TODO
+	// defaultExpiration := time.Hour
+	// instance = &redisCache{
+	// 	defaultExpiration: defaultExpiration,
+	// }
+	// server.RegisterService(instance.(*redisCache), server.Low)
+}
 
-	var pool = &redis.Pool{
+func (c *redisCache) Init() (err error) {
+	viper.SetDefault("redis", "")
+	hosts := strings.Split(viper.Get("redis").(string), ",")
+	if len(hosts) == 0 || len(hosts) > 1 {
+		log.Fatalln("None or more than one host configured")
+	}
+	viper.SetDefault("redispassword", "")
+	password := viper.Get("redispassword").(string)
+	log.Infof("Initialised redis hosts : %s", hosts[0])
+	c.pool = newRedisCache(hosts[0], password, c.defaultExpiration)
+	return nil
+}
+
+func (c *redisCache) OnConfig() {
+	//Do nothing
+}
+
+func newRedisCache(host string, password string, defaultExpiration time.Duration) *redis.Pool {
+
+	return &redis.Pool{
 		MaxIdle:     5,
 		MaxActive:   0,
 		IdleTimeout: time.Duration(240) * time.Second,
@@ -50,10 +79,6 @@ func newRedisCache(host string, password string, defaultExpiration time.Duration
 			_, err := c.Do("PING")
 			return err
 		},
-	}
-	return &redisCache{
-		pool,
-		defaultExpiration,
 	}
 }
 
@@ -115,7 +140,7 @@ func (c *redisCache) Get(key string, ptrValue interface{}) error {
 	if err != nil {
 		return err
 	}
-	return Deserialize(item, ptrValue)
+	return deserialize(item, ptrValue)
 }
 
 func generalizeStringSlice(strs []string) []interface{} {
@@ -243,7 +268,7 @@ func (c *redisCache) invoke(f func(string, ...interface{}) (interface{}, error),
 		expires = time.Duration(0)
 	}
 
-	b, err := Serialize(value)
+	b, err := serialize(value)
 	if err != nil {
 		return err
 	}
@@ -264,5 +289,5 @@ func (g redisItemMapGetter) Get(key string, ptrValue interface{}) error {
 	if !ok {
 		return ErrCacheMiss
 	}
-	return Deserialize(item, ptrValue)
+	return deserialize(item, ptrValue)
 }

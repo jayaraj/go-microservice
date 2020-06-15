@@ -2,18 +2,44 @@ package cache
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type memcachedCache struct {
-	*memcache.Client
+	client            *memcache.Client
 	defaultExpiration time.Duration
 }
 
 type itemMapGetter map[string]*memcache.Item
+
+func init() {
+	//TODO
+	// defaultExpiration := time.Hour
+	// instance = &memcachedCache{
+	// 	defaultExpiration: defaultExpiration,
+	// }
+	// server.RegisterService(instance.(*memcachedCache), server.Low)
+}
+
+func (c *memcachedCache) Init() (err error) {
+	viper.SetDefault("memcache", "")
+	hosts := strings.Split(viper.Get("memcache").(string), ",")
+	if len(hosts) == 0 {
+		log.Fatalln("No host configured")
+	}
+	log.Infof("Initialised memcache hosts : %v", hosts)
+	c.client = memcache.New(hosts...)
+	return nil
+}
+
+func (c *memcachedCache) OnConfig() {
+	//Do nothing
+}
 
 func newMemcachedCache(hostList []string, defaultExpiration time.Duration) *memcachedCache {
 	return &memcachedCache{
@@ -35,15 +61,15 @@ func (c *memcachedCache) Replace(key string, value interface{}, expires time.Dur
 }
 
 func (c *memcachedCache) Get(key string, ptrValue interface{}) error {
-	item, err := c.Client.Get(key)
+	item, err := c.client.Get(key)
 	if err != nil {
 		return convertMemcacheError(err)
 	}
-	return Deserialize(item.Value, ptrValue)
+	return deserialize(item.Value, ptrValue)
 }
 
 func (c *memcachedCache) GetMulti(keys ...string) (Getter, error) {
-	items, err := c.Client.GetMulti(keys)
+	items, err := c.client.GetMulti(keys)
 	if err != nil {
 		return nil, convertMemcacheError(err)
 	}
@@ -51,16 +77,16 @@ func (c *memcachedCache) GetMulti(keys ...string) (Getter, error) {
 }
 
 func (c *memcachedCache) Delete(key string) error {
-	return convertMemcacheError(c.Client.Delete(key))
+	return convertMemcacheError(c.client.Delete(key))
 }
 
 func (c *memcachedCache) Increment(key string, delta uint64) (newValue uint64, err error) {
-	newValue, err = c.Client.Increment(key, delta)
+	newValue, err = c.client.Increment(key, delta)
 	return newValue, convertMemcacheError(err)
 }
 
 func (c *memcachedCache) Decrement(key string, delta uint64) (newValue uint64, err error) {
-	newValue, err = c.Client.Decrement(key, delta)
+	newValue, err = c.client.Decrement(key, delta)
 	return newValue, convertMemcacheError(err)
 }
 
@@ -80,11 +106,11 @@ func (c *memcachedCache) invoke(f func(*memcache.Client, *memcache.Item) error,
 		expires = time.Duration(0)
 	}
 
-	b, err := Serialize(value)
+	b, err := serialize(value)
 	if err != nil {
 		return err
 	}
-	return convertMemcacheError(f(c.Client, &memcache.Item{
+	return convertMemcacheError(f(c.client, &memcache.Item{
 		Key:        key,
 		Value:      b,
 		Expiration: int32(expires / time.Second),
@@ -97,7 +123,7 @@ func (g itemMapGetter) Get(key string, ptrValue interface{}) error {
 		return ErrCacheMiss
 	}
 
-	return Deserialize(item.Value, ptrValue)
+	return deserialize(item.Value, ptrValue)
 }
 
 func convertMemcacheError(err error) error {

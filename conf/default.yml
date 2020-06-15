@@ -5,9 +5,6 @@ application: "microservice"
 # Options : dev, prod
 mode: "dev"
 
-# Options memcache, redis, inmemory. default: inmemory 
-cache: "inmemory"
-
 # redis
 # Options:  127.0.0.1:6379
 redis: "127.0.0.1:6379"

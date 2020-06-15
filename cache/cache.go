@@ -2,16 +2,11 @@ package cache
 
 import (
 	"errors"
-	"go-microservice/server"
-	"strings"
 	"time"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 var (
-	instance        *cacheService
+	instance        Cache
 	ErrCacheMiss    = errors.New("key not found")
 	ErrNotStored    = errors.New("not stored")
 	ErrInvalidValue = errors.New("invalid value")
@@ -21,58 +16,6 @@ const (
 	DefaultExpiryTime  = time.Duration(0)
 	ForEverNeverExpiry = time.Duration(-1)
 )
-
-type cacheService struct {
-	cache Cache
-}
-
-func init() {
-	instance = &cacheService{}
-	server.RegisterService(instance, server.Low)
-}
-
-func (c *cacheService) Init() (err error) {
-	defaultExpiration := time.Hour
-	viper.SetDefault("cache", "inmemory")
-	switch viper.Get("cache") {
-	case "redis":
-		{
-			viper.SetDefault("redis", "")
-			hosts := strings.Split(viper.Get("redis").(string), ",")
-			if len(hosts) == 0 || len(hosts) > 1 {
-				log.Error("None or more than one host configured")
-				instance.cache = newInMemoryCache(defaultExpiration)
-			} else {
-				viper.SetDefault("redispassword", "")
-				password := viper.Get("redispassword").(string)
-				log.Infof("Initialised redis hosts : %s", hosts[0])
-				instance.cache = newRedisCache(hosts[0], password, defaultExpiration)
-			}
-		}
-	case "memcache":
-		{
-			viper.SetDefault("memcache", "")
-			hosts := strings.Split(viper.Get("memcache").(string), ",")
-			if len(hosts) == 0 {
-				log.Error("No host configured")
-				instance.cache = newInMemoryCache(defaultExpiration)
-			} else {
-				log.Infof("Initialised memcache hosts : %v", hosts)
-				instance.cache = newMemcachedCache(hosts, defaultExpiration)
-			}
-		}
-	default:
-		{
-			log.Infof("Initialised in-memory cache")
-			instance.cache = newInMemoryCache(defaultExpiration)
-		}
-	}
-	return nil
-}
-
-func (c *cacheService) OnConfig() {
-	c.Init()
-}
 
 type Getter interface {
 	Get(key string, ptrValue interface{}) error
@@ -144,37 +87,37 @@ type Cache interface {
 }
 
 func Get(key string, ptrValue interface{}) error {
-	return instance.cache.Get(key, ptrValue)
+	return instance.Get(key, ptrValue)
 }
 
 func GetMulti(keys ...string) (Getter, error) {
-	return instance.cache.GetMulti(keys...)
+	return instance.GetMulti(keys...)
 }
 
 func Delete(key string) error {
-	return instance.cache.Delete(key)
+	return instance.Delete(key)
 }
 
 func Increment(key string, n uint64) (newValue uint64, err error) {
-	return instance.cache.Increment(key, n)
+	return instance.Increment(key, n)
 }
 
 func Decrement(key string, n uint64) (newValue uint64, err error) {
-	return instance.cache.Decrement(key, n)
+	return instance.Decrement(key, n)
 }
 
 func Flush() error {
-	return instance.cache.Flush()
+	return instance.Flush()
 }
 
 func Set(key string, value interface{}, expires time.Duration) error {
-	return instance.cache.Set(key, value, expires)
+	return instance.Set(key, value, expires)
 }
 
 func Add(key string, value interface{}, expires time.Duration) error {
-	return instance.cache.Add(key, value, expires)
+	return instance.Add(key, value, expires)
 }
 
 func Replace(key string, value interface{}, expires time.Duration) error {
-	return instance.cache.Replace(key, value, expires)
+	return instance.Replace(key, value, expires)
 }

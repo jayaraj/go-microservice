@@ -15,6 +15,25 @@ type inMemoryCache struct {
 	mu    sync.RWMutex
 }
 
+func init() {
+	//TODO
+	// defaultExpiration := time.Hour
+	// instance = &inMemoryCache{
+	// 	cache: *cache.New(defaultExpiration, time.Minute),
+	// 	mu:    sync.RWMutex{},
+	// }
+	// server.RegisterService(instance.(*inMemoryCache), server.Low)
+}
+
+func (c *inMemoryCache) Init() (err error) {
+	//Do nothing
+	return nil
+}
+
+func (c *inMemoryCache) OnConfig() {
+	//Do nothing
+}
+
 func newInMemoryCache(defaultExpiration time.Duration) *inMemoryCache {
 	return &inMemoryCache{
 		cache: *cache.New(defaultExpiration, time.Minute),

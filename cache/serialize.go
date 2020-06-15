@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Serialize(value interface{}) ([]byte, error) {
+func serialize(value interface{}) ([]byte, error) {
 	if data, ok := value.([]byte); ok {
 		return data, nil
 	}
@@ -33,7 +33,7 @@ func Serialize(value interface{}) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-func Deserialize(byt []byte, ptr interface{}) (err error) {
+func deserialize(byt []byte, ptr interface{}) (err error) {
 	if data, ok := ptr.(*[]byte); ok {
 		*data = byt
 		return
