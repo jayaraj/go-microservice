@@ -1,0 +1,18 @@
+# Application
+application: "microservice"
+
+# Server configurations 
+# Options : dev, prod
+mode: "dev"
+
+# Options memcache, redis, inmemory. default: inmemory 
+cache: "inmemory"
+
+# redis
+# Options:  127.0.0.1:6379
+redis: "127.0.0.1:6379"
+redispassword: "passwd" 
+
+# memcache
+# Options:  127.0.0.1:11211,127.0.0.2:11211,127.0.0.3:11211
+memcache: "127.0.0.1:11211, 127.0.0.2:11211"
