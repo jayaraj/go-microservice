@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	_ "go-microservice/bus"
 	"io"
 	"os"
 	"path/filepath"
@@ -86,7 +87,7 @@ func (server *Server) Run() (err error) {
 
 	for _, service := range services {
 		if err := service.Instance.Init(); err != nil {
-			log.WithField("Error", err).Error("Error Starting services")
+			log.WithField("Error", err).Error("Starting services")
 			return err
 		}
 	}

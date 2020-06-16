@@ -13,3 +13,12 @@ redispassword: "passwd"
 # memcache
 # Options:  127.0.0.1:11211,127.0.0.2:11211,127.0.0.3:11211
 memcache: "127.0.0.1:11211, 127.0.0.2:11211"
+
+# postgres
+postgres:
+  host: "127.0.0.1"
+  port: 5432
+  dbname: "dashboard"
+  username: "postgres"
+  password: "Qwertyu10P"
+  sslmode: "disable"
