@@ -39,7 +39,6 @@ func (c *redisCache) Init() (err error) {
 }
 
 func (c *redisCache) OnConfig() {
-	//Do nothing
 }
 
 func newRedisCache(host string, password string, defaultExpiration time.Duration) *redis.Pool {

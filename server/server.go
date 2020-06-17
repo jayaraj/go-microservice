@@ -23,6 +23,8 @@ type Server struct {
 	childRoutines      *errgroup.Group
 	shutdownReason     string
 	shutdownInProgress bool
+	homepath           string
+	configpath         string
 }
 
 func init() {
@@ -31,6 +33,21 @@ func init() {
 }
 
 func NewServer(homepath string, configpath string) *Server {
+
+	loadConfigurations(homepath, configpath)
+	rootCtx, shutdownFn := context.WithCancel(context.Background())
+	childRoutines, childCtx := errgroup.WithContext(rootCtx)
+
+	return &Server{
+		context:       childCtx,
+		shutdownFn:    shutdownFn,
+		childRoutines: childRoutines,
+		homepath:      homepath,
+		configpath:    configpath,
+	}
+}
+
+func loadConfigurations(homepath string, configpath string) {
 
 	viper.AddConfigPath(filepath.Dir(configpath))
 	viper.SetConfigName(filepath.Base(configpath))
@@ -63,15 +80,6 @@ func NewServer(homepath string, configpath string) *Server {
 	}
 	viper.WatchConfig()
 	viper.OnConfigChange(onConfigChange)
-
-	rootCtx, shutdownFn := context.WithCancel(context.Background())
-	childRoutines, childCtx := errgroup.WithContext(rootCtx)
-
-	return &Server{
-		context:       childCtx,
-		shutdownFn:    shutdownFn,
-		childRoutines: childRoutines,
-	}
 }
 
 func onConfigChange(e fsnotify.Event) {

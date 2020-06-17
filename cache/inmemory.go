@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"go-microservice/server"
 	"reflect"
 	"sync"
 	"time"
@@ -17,21 +18,19 @@ type inMemoryCache struct {
 
 func init() {
 	//TODO
-	// defaultExpiration := time.Hour
-	// instance = &inMemoryCache{
-	// 	cache: *cache.New(defaultExpiration, time.Minute),
-	// 	mu:    sync.RWMutex{},
-	// }
-	// server.RegisterService(instance.(*inMemoryCache), server.Low)
+	defaultExpiration := time.Hour
+	instance = &inMemoryCache{
+		cache: *cache.New(defaultExpiration, time.Minute),
+		mu:    sync.RWMutex{},
+	}
+	server.RegisterService(instance.(*inMemoryCache), server.Low)
 }
 
 func (c *inMemoryCache) Init() (err error) {
-	//Do nothing
 	return nil
 }
 
 func (c *inMemoryCache) OnConfig() {
-	//Do nothing
 }
 
 func newInMemoryCache(defaultExpiration time.Duration) *inMemoryCache {

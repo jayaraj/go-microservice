@@ -18,7 +18,7 @@ memcache: "127.0.0.1:11211, 127.0.0.2:11211"
 postgres:
   host: "127.0.0.1"
   port: 5432
-  dbname: "dashboard"
+  dbname: "postgres"
   username: "postgres"
   password: "Qwertyu10P"
   sslmode: "disable"

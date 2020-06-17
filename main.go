@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	_ "go-microservice/bus"
 	_ "go-microservice/cache"
 	_ "go-microservice/dbs/postgres"
 	"go-microservice/server"

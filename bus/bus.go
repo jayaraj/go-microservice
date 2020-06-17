@@ -127,7 +127,6 @@ func (bus *bus) publish(msg Msg) error {
 			return err.(error)
 		}
 	}
-
 	return nil
 }
 

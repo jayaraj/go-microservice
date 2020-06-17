@@ -38,7 +38,6 @@ func (c *memcachedCache) Init() (err error) {
 }
 
 func (c *memcachedCache) OnConfig() {
-	//Do nothing
 }
 
 func newMemcachedCache(hostList []string, defaultExpiration time.Duration) *memcachedCache {
