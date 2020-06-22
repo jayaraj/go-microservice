@@ -1,0 +1,60 @@
+syntax="proto3";
+
+package proto;
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option go_package = "go-microservice/proto;proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+    info: {
+      version: "1.0";
+    };
+    external_docs: {
+      url: "https://github.com/jayaraj/go-microservice";
+      description: "go-microservice boilerplate";
+    }
+    schemes: HTTP;
+  };
+
+  service UserService {
+    rpc AddUser(AddUserRequest) returns (User) {
+      option (google.api.http) = {
+        post: "/api/users"
+        body: "*"
+      };
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+        summary: "Add User"
+        description: "Adds a user to the repository."
+        tags: "Users"
+      };
+    }
+    rpc ListUsers(ListUsersRequest) returns (stream User) {
+      option (google.api.http) = {
+        get: "/api/users"
+      };
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+        summary: "List Users"
+        description: "List Users on the repository."
+        tags: "Users"
+      };
+    }
+  }
+  
+  message AddUserRequest {
+    string name = 1;
+    string email = 2;
+  }
+  
+  message ListUsersRequest {
+    int64 limit = 1;
+    int64 page = 2;
+  }
+  
+  message User {
+    int64 id = 1;
+    string name = 2;
+    string email = 3;
+  }
+  

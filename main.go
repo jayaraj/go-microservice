@@ -2,10 +2,12 @@ package main
 
 import (
 	"flag"
-	_ "go-microservice/bus"
-	_ "go-microservice/cache"
-	_ "go-microservice/dbs/postgres"
-	"go-microservice/server"
+	_ "go-microservice/infra/cache"
+	_ "go-microservice/infra/dbs/postgres"
+	_ "go-microservice/infra/gateway"
+	"go-microservice/infra/server"
+	_ "go-microservice/repository"
+	_ "go-microservice/services"
 	"os"
 	"os/signal"
 	"syscall"

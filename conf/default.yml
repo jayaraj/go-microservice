@@ -22,3 +22,9 @@ postgres:
   username: "postgres"
   password: "Qwertyu10P"
   sslmode: "disable"
+
+# Rest Service port
+http: 9000
+
+# GRPC Service port
+grpc: 9001
