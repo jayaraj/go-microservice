@@ -1,6 +1,8 @@
 # go-microservice 
 ![Microservice](https://github.com/jayaraj/go-microservice/workflows/Microservice/badge.svg)
 
+![go-microservice](https://github.com/jayaraj/go-microservice/blob/master/go-microservice.jpg?raw=true)
+
 This is a template for writing a micro-service in go with a server infrastructure. It uses [`grpc-gateway`](https://github.com/grpc-ecosystem/grpc-gateway) for endpoints which supports both GRPC & REST interfaces.
 
 All the packages are loosely coupled so just remove them if not required. Make sure to clean imported infra packages from main.go if not used.
