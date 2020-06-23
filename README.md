@@ -18,7 +18,7 @@ All the packages are loosely coupled so just remove them if not required. Make s
 5. `conf`
     - default.yml which used by default. main.go supports custom config file path.
 
-Every component file within this service will have three functions
+Every component file within this service will have four functions
 
 1. `init` register your component structure with server to initialize the component with priority or to start your background services.
 ```go
@@ -39,7 +39,7 @@ func (c *userRepo) Init() (err error) {
 }
 ```
 
-3. `Run` background service. `<-ctx.Done()` will return err when server recieves termination, use this for safe shutdown.
+3. `Run` (optional)background service. `<-ctx.Done()` will return err when server recieves termination, use this for safe shutdown.
 ```go
 func (c *GRPC) Run(ctx context.Context) error {
 	go func() {
@@ -49,6 +49,12 @@ func (c *GRPC) Run(ctx context.Context) error {
 	}()
 	log.WithField("Port", c.grpcPort).Info("Grpc listening...")
 	return c.grpcServer.Serve(c.listener)
+}
+```
+
+4. `OnConfig` called when config file is edited
+```go
+func (service *UserService) OnConfig() {
 }
 ```
 
