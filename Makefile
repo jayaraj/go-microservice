@@ -1,5 +1,4 @@
 generate:
-	go mod tidy 
 	protoc \
         -I proto \
         -I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
@@ -16,8 +15,9 @@ generate:
 	statik -m -f -src ./proto/openapi/
 
 setup:
-	go install \
-        github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway \
-        github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger \
+	go mod tidy 
+	go get \
+        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
         github.com/golang/protobuf/protoc-gen-go \
         github.com/rakyll/statik

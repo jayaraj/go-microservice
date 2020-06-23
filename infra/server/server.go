@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
@@ -47,9 +48,11 @@ func NewServer(homepath string, configpath string) *Server {
 }
 
 func loadConfigurations(homepath string, configpath string) {
-
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("ms")
 	viper.AddConfigPath(filepath.Dir(configpath))
 	viper.SetConfigName(filepath.Base(configpath))
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.SetConfigType("yaml")
 	logDir := homepath + "/logs"
 	err := os.MkdirAll(logDir, os.ModePerm)
@@ -79,6 +82,12 @@ func loadConfigurations(homepath string, configpath string) {
 	}
 	viper.WatchConfig()
 	viper.OnConfigChange(onConfigChange)
+	for _, key := range viper.AllKeys() {
+		val := viper.Get(key)
+		log.Debugf("%s : %s", key, val)
+		viper.Set(key, val)
+	}
+
 }
 
 func onConfigChange(e fsnotify.Event) {

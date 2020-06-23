@@ -1,0 +1,27 @@
+name: Microservice
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    container: 
+      image: golang:latest
+      env:
+        PROTOBUF_VERSION: 3.12.3
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Protoc
+      run: >
+      apt-get install -y unzip &&
+      wget https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOBUF_VERSION/protoc-$PROTOBUF_VERSION-linux-x86_64.zip &&
+      unzip protoc-$PROTOBUF_VERSION-linux-x86_64.zip -d /usr/local/ &&
+      rm -rf protoc-$PROTOBUF_VERSION-linux-x86_64.zip
+    - name: Download
+      run: GO111MODULE=off go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+    - name: Setup
+      run: make setup
+    - name: Generate
+      run: make generate
+    - name: Build
+      run: CGO_ENABLED=0 go build -v

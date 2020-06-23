@@ -1,0 +1,60 @@
+version: '3.5'
+services:
+  redis:
+    restart: always
+    image: 'redis:4-alpine'
+    command: redis-server --requirepass Qwertyu10P
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - '6379:6379'
+    networks:
+      - microservice-network
+  postgres:
+    restart: always
+    image: 'postgres:latest'
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Qwertyu10P
+    networks:
+      - microservice-network
+  microservice:
+      restart: always
+      build:
+        dockerfile: Dockerfile
+        context: ./
+      ports:
+        - '80:9000'
+      environment:
+        - MS_HTTP=9000
+        - MS_GRPC=9001 
+        - MS_POSTGRES_HOST=postgres
+        - MS_POSTGRES_PORT=5432
+        - MS_POSTGRES_DBNAME=postgres
+        - MS_POSTGRES_USERNAME=postgres
+        - MS_POSTGRES_PASSWORD=Qwertyu10P
+        - MS_REDIS=redis:6379
+        - MS_REDISPASSWORD=Qwertyu10P
+      networks:
+        - microservice-network
+volumes:
+  postgres-data:
+  redis-data:
+networks:
+  microservice-network:
+   name: microservice
