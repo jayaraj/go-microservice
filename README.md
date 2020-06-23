@@ -7,7 +7,8 @@ All the packages are loosely coupled so just remove them if not required. Make s
 
 ## Application Components
 1. `proto`
-    - Proto definitions for your service.
+    - Proto definitions for your service. (e.g.)user.proto file defines your service interfaces.
+    - This service supports swagger UI. Make sure you change the `yourservice.swagger.json` within in `proto/openapi/index.html`
 2. `dtos` 
    - Repository models, command structs to communicate between components.
 3. `services`
@@ -16,6 +17,40 @@ All the packages are loosely coupled so just remove them if not required. Make s
     - Optional if you access database
 5. `conf`
     - default.yml which used by default. main.go supports custom config file path.
+
+Every component file within this service will have three functions
+
+1. `init` register your component structure with server to initialize the component with priority or to start your background services.
+```go
+func init() {
+	server.RegisterService(&userRepo{}, server.Low)
+}
+```
+2. `Init` function where you intialize your component, register your services with bus for serving other components
+```go
+func (c *userRepo) Init() (err error) {
+
+	c.addUserMigrations()
+
+	//Register for all the repository requests
+	bus.AddHandler(CreateUser)
+	bus.AddHandler(ListUsers)
+	return nil
+}
+```
+
+3. `Run` background service. `<-ctx.Done()` will return err when server recieves termination, use this for safe shutdown.
+```go
+func (c *GRPC) Run(ctx context.Context) error {
+	go func() {
+		<-ctx.Done()
+		log.Infoln("Stopping Grpc")
+		c.grpcServer.GracefulStop()
+	}()
+	log.WithField("Port", c.grpcPort).Info("Grpc listening...")
+	return c.grpcServer.Serve(c.listener)
+}
+```
 
 ## Infra
 1. `bus`
