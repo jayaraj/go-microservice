@@ -6,15 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: golang:latest
-      env:
-        PROTOBUF_VERSION: 3.12.3
     steps:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Buf
       run: make local
-    - name: Download
-      run: GO111MODULE=off go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
     - name: Setup
       run: make setup
     - name: Generate
