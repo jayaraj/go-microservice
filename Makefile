@@ -21,8 +21,8 @@ $(BUF):
 	@mkdir -p $(dir $(BUF))
 	@touch $(BUF)
 
-.PHONY: ci
-ci: $(BUF)
+.PHONY: local
+local: $(BUF)
 
 .PHONY: generate
 generate:
