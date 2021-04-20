@@ -24,9 +24,11 @@ type BackgroundService interface {
 type Priority int
 
 const (
-	High         Priority = 100
-	Intermediate Priority = 50
-	Low          Priority = 0
+	High      Priority = 100
+	InterHigh Priority = 75
+	Inter     Priority = 50
+	InterLow  Priority = 25
+	Low       Priority = 0
 )
 
 var services []*Descriptor

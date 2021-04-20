@@ -7,9 +7,8 @@ require (
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/garyburd/redigo v1.6.0
-	github.com/golang/protobuf v1.4.2
-	github.com/grpc-ecosystem/grpc-gateway v1.14.6
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.0-beta.3
+	github.com/golang/protobuf v1.5.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.3.0
 	github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 // indirect
 	github.com/jinzhu/gorm v1.9.14
 	github.com/lestrrat/go-envload v0.0.0-20180220120943-6ed08b54a570 // indirect
@@ -20,9 +19,10 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
 	github.com/tebeka/strftime v0.1.4 // indirect
-	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
-	google.golang.org/genproto v0.0.0-20200623002339-fbb79eadd5eb
-	google.golang.org/grpc v1.30.0
-	google.golang.org/protobuf v1.24.0
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
+	google.golang.org/genproto v0.0.0-20210224155714-063164c882e6
+	google.golang.org/grpc v1.36.0
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 // indirect
+	google.golang.org/protobuf v1.26.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )

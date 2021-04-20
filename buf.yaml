@@ -1,0 +1,17 @@
+version: v1beta1
+name: buf.build/jayaraj/go-microservice
+lint:
+  use:
+    - DEFAULT
+  ignore_only:
+    PACKAGE_DIRECTORY_MATCH:
+      - proto
+    PACKAGE_VERSION_SUFFIX:
+      - proto
+    RPC_REQUEST_RESPONSE_UNIQUE:
+      - proto
+    RPC_RESPONSE_STANDARD_NAME:
+      - proto
+deps:
+  - buf.build/beta/googleapis
+  - buf.build/grpc-ecosystem/grpc-gateway

@@ -3,10 +3,11 @@ package services
 import (
 	"context"
 	"go-microservice/dtos"
+	gw "go-microservice/generated/gateway/proto"
+	"go-microservice/generated/proto"
 	"go-microservice/infra/bus"
 	"go-microservice/infra/gateway"
 	"go-microservice/infra/server"
-	"go-microservice/proto"
 	"sync"
 
 	log "github.com/sirupsen/logrus"
@@ -29,14 +30,14 @@ func (service *UserService) Init() (err error) {
 	proto.RegisterUserServiceServer(gateway.Grpc(), service)
 
 	//Call RegisterServiceHandler generated at <service>.pb.gw.go
-	proto.RegisterUserServiceHandler(context.Background(), gateway.Mux(), gateway.ClientConnection())
+	gw.RegisterUserServiceHandler(context.Background(), gateway.Mux(), gateway.ClientConnection())
 	return nil
 }
 
 func (service *UserService) OnConfig() {
 }
 
-func (service *UserService) AddUser(ctx context.Context, request *proto.AddUserRequest) (*proto.User, error) {
+func (service *UserService) AddUser(ctx context.Context, request *proto.AddUserRequest) (*proto.AddUserResponse, error) {
 	service.mu.Lock()
 	defer service.mu.Unlock()
 
@@ -48,7 +49,7 @@ func (service *UserService) AddUser(ctx context.Context, request *proto.AddUserR
 		log.WithField("Error", err).Error("Add user failed")
 		return nil, err
 	}
-	user := proto.User{
+	user := proto.AddUserResponse{
 		Id:    cmd.Result.Id,
 		Name:  cmd.Result.Name,
 		Email: cmd.Result.Email,
@@ -69,7 +70,7 @@ func (service *UserService) ListUsers(request *proto.ListUsersRequest, srv proto
 		return err
 	}
 	for _, user := range cmd.Result.Users {
-		err := srv.Send(&proto.User{
+		err := srv.Send(&proto.ListUsersResponse{
 			Id:    user.Id,
 			Name:  user.Name,
 			Email: user.Email,

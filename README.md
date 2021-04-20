@@ -1,4 +1,4 @@
-# go-microservice 
+# go-microservice
 ![Microservice](https://github.com/jayaraj/go-microservice/workflows/Microservice/badge.svg)
 
 ![go-microservice](https://github.com/jayaraj/go-microservice/blob/master/go-microservice.jpg?raw=true)
@@ -11,7 +11,7 @@ All the packages are loosely coupled so just remove them if not required. Make s
 1. `proto`
     - Proto definitions for your service. (e.g.)user.proto file defines your service interfaces.
     - This service supports swagger UI. Make sure you change the `yourservice.swagger.json` within in `proto/openapi/index.html`
-2. `dtos` 
+2. `dtos`
    - Repository models, command structs to communicate between components.
 3. `services`
    - Application files to service the request
@@ -62,13 +62,17 @@ func (service *UserService) OnConfig() {
 
 ## Infra
 1. `bus`
-    - Use bus to communicate between components, avoid circular imports 
+    - Use bus to communicate between components, avoid circular imports
 2. `cache`
     - Three cache libraries are supported. Use the ones you need and remove others.
 3. `db`
-    - Supports postgres incremental migration with [`gorm`](https://gorm.io/) 
+    - Supports postgres incremental migration with [`gorm`](https://gorm.io/)
 4. `gateway`
-    - [`grpc-gateway`](https://github.com/grpc-ecosystem/grpc-gateway) wrappers. 
+    - [`grpc-gateway`](https://github.com/grpc-ecosystem/grpc-gateway) wrappers.
+
+## Dependencies
+1. Generate stubs using [`buf`](https://github.com/bufbuild/buf)
+	- Buf is a tool that provides various protobuf utilities such as linting, breaking change detection and generation. Please find installation instructions on https://docs.buf.build/installation/.
 
 ## Installation
 
@@ -76,7 +80,7 @@ func (service *UserService) OnConfig() {
    - `make setup` installs all the modules required
    - `make generate` compiles the proto files
    - `go run .`
-   
+
 2. Deploy in `docker`
    - `docker-compose up -d`
 

@@ -3,11 +3,11 @@ syntax="proto3";
 package proto;
 
 import "google/api/annotations.proto";
-import "protoc-gen-swagger/options/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
-option go_package = "go-microservice/proto;proto";
+option go_package = "go-microservice/generated/proto;proto";
 
-option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
       version: "1.0";
     };
@@ -19,42 +19,47 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
   };
 
   service UserService {
-    rpc AddUser(AddUserRequest) returns (User) {
+    rpc AddUser(AddUserRequest) returns (AddUserResponse) {
       option (google.api.http) = {
         post: "/api/users"
         body: "*"
       };
-      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         summary: "Add User"
         description: "Adds a user to the repository."
         tags: "Users"
       };
     }
-    rpc ListUsers(ListUsersRequest) returns (stream User) {
+    rpc ListUsers(ListUsersRequest) returns (stream ListUsersResponse) {
       option (google.api.http) = {
         get: "/api/users"
       };
-      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
         summary: "List Users"
         description: "List Users on the repository."
         tags: "Users"
       };
     }
   }
-  
+
   message AddUserRequest {
     string name = 1;
     string email = 2;
   }
-  
+
   message ListUsersRequest {
     int64 limit = 1;
     int64 page = 2;
   }
-  
-  message User {
+
+	message AddUserResponse {
     int64 id = 1;
     string name = 2;
     string email = 3;
   }
-  
+
+	message ListUsersResponse {
+    int64 id = 1;
+    string name = 2;
+    string email = 3;
+  }
